@@ -49,12 +49,13 @@ int GetTypeOfStr(string &str, string &response)
 		int nextCharType = GetTypeOfChar(str[++pos]);
 		while (nextCharType == 1 || nextCharType == 2)
 			nextCharType = GetTypeOfChar(str[++pos]);
-		if (nextCharType == 3)
+		if (nextCharType == 3)//Variable
 		{
-			response = "1";
+			string varName = str.substr(0, pos - 1);
+			response = Vars[varName].value;
 			return 1;
 		}
-		if (nextCharType == 4)
+		if (nextCharType == 4)//Function
 		{
 			int oldPos = pos;
 			int pcount = 1;

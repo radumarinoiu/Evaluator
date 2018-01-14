@@ -116,11 +116,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AdvancedArithmeticOperations.cpp" />
-    <ClCompile Include="CharTypeFinder.cpp" />
-    <ClCompile Include="EvaluatePostfix.cpp" />
-    <ClCompile Include="InfixToPostfix.cpp" />
+    <ClCompile Include="InfixPostfix.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapInitializers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructures.h" />

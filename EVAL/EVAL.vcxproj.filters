@@ -18,16 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InfixToPostfix.cpp">
+    <ClCompile Include="InfixPostfix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CharTypeFinder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AdvancedArithmeticOperations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EvaluatePostfix.cpp">
+    <ClCompile Include="MapInitializers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
