@@ -1,7 +1,6 @@
 #pragma once
 struct Variable {
-	bool isFloatingPoint = false;
-	bool isBoolean = false;
+	uint8_t type; // 1-bool / 2-int / 3-double
 	double value = 0;
 };
 
