@@ -119,6 +119,7 @@
     <ClCompile Include="InfixPostfix.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapInitializers.cpp" />
+    <ClCompile Include="SelectFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataStructures.h" />
