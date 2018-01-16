@@ -42,7 +42,8 @@ int main()
 		cin.getline(ci, 1024);
 		input = ci;
 		error = "";
-		Parse(input, error);
+		if(input != "")
+			Parse(input, error);
 		cout << endl;
 	}
 	cin.get();

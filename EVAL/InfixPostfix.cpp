@@ -14,7 +14,7 @@ int GetTypeOfChar(char c)
 		return 1; // Case Insensitive Letter
 	if (c >= '0' && c <= '9')
 		return 2; // Digit
-	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '\\' || c == '%' || c == '\0' || c == '=')
+	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '\\' || c == '%' || c == '\0')
 		return 3; // Basic Arithmetic Operation
 	if (c == '(' || c == ')')
 		return 4; // Parenthesis
