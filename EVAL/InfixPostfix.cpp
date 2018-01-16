@@ -259,10 +259,10 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 	{
 		if (input.find(')') == string::npos)
 		{
-			error = "Lipseste paranteza inchisa pentru paranteza de pe pozitia '" + to_string(oldPos) + "!";
+			error = "Lipseste paranteza inchisa pentru paranteza de pe pozitia " + to_string(oldPos) + "!";
 			return;
 		}
-		if (GetTypeOfChar(input[input.find(')') + 1]) != 3)
+		if (GetTypeOfChar(input[input.find(')') + 1]) != 3 && input[input.find(')') + 1] != ')')
 		{
 			error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
 			return;
