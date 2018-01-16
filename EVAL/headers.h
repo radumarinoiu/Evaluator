@@ -11,6 +11,6 @@ extern std::unordered_map<int, std::string> BasicMathOperationsReverse;
 
 bool Parse(std::string, std::string&);
 void InfixToElements(std::string, std::string&, int, std::vector<Element>&);
-Variable EvaluateElements(std::vector<Element>, uint8_t&);
+Variable EvaluateElements(std::vector<Element>);
 Variable ApplyBasicOperation(Variable, Variable, uint8_t);
 void InitializeMaps();

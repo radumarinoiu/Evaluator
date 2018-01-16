@@ -2,6 +2,7 @@
 #include <vector>
 #include <stack>
 #include <minmax.h>
+#include <iostream>
 
 #include "Headers.h"
 
@@ -51,8 +52,22 @@ bool Parse(string input, string &error)
 			return false;
 		}
 
-		Vars[leftSide] = EvaluateElements(rightSideVar, Vars[leftSide].type);
+		Vars[leftSide] = EvaluateElements(rightSideVar);
+		return true;
 	}
+	else
+	{
+		Variable result;
+		vector<Element> expression;
+		InfixToElements(input, error, 0, expression);
+		result = EvaluateElements(expression);
+		if (result.type == 2)
+		{
+			cout << (int)(result.value) << endl;
+			return true;
+		}
+	}
+	return false;
 }
 
 void InfixToElements(string input, string &error, int oldPos, vector<Element> &Elements)
@@ -102,7 +117,13 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 				error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
 				return;
 			}
-			InfixToElements(input.substr(pos, input.find(')') - pos), error, oldPos + pos, Elements); // Parse content of parenthesis
+			vector<Element> content;
+			InfixToElements(input.substr(pos, input.find(')') - pos), error, oldPos + pos, content); // Parse content of parenthesis
+			Element evaluatedContent;
+			evaluatedContent.operation = 0;
+			evaluatedContent.var = EvaluateElements(content);
+			Elements.push_back(evaluatedContent);
+
 			InfixToElements(input.substr(input.find(')') + 1, input.length() - (input.find(')') + 1)), error, oldPos + input.find(')') + 1, Elements); // Parse content after parenthesis
 			return;
 		}
@@ -186,13 +207,18 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 			error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
 			return;
 		}
-		InfixToElements(input.substr(1, input.find(')') - 1), error, oldPos + 1, Elements); // Parse content of parenthesis
+		vector<Element> content;
+		InfixToElements(input.substr(1, input.find(')') - 1), error, oldPos + 1, content); // Parse content of parenthesis
+		Element evaluatedContent;
+		evaluatedContent.operation = 0;
+		evaluatedContent.var = EvaluateElements(content);
+		Elements.push_back(evaluatedContent);
 		InfixToElements(input.substr(input.find(')') + 1, input.length() - (input.find(')') + 1)), error, oldPos + input.find(')') + 1, Elements); // Parse content after parenthesis
 		return;
 	}
 }
 
-Variable EvaluateElements(vector<Element> expression, uint8_t &returnType)
+Variable EvaluateElements(vector<Element> expression)
 {
 	stack<Element> opStack;
 	vector<Element> postFix;
@@ -230,7 +256,8 @@ Variable EvaluateElements(vector<Element> expression, uint8_t &returnType)
 		if (postFix[pos + 2].operation != 0)
 		{
 			postFix[pos].var = ApplyBasicOperation(postFix[pos].var, postFix[pos + 1].var, postFix[pos + 2].operation);
-			postFix.erase(postFix.begin() + pos + 1, postFix.begin() + pos + 2);
+			postFix.erase(postFix.begin() + pos + 2);
+			postFix.erase(postFix.begin() + pos + 1);
 			pos--;
 		}
 		else
