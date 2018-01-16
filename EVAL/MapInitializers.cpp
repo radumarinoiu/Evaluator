@@ -16,4 +16,8 @@ void InitializeMaps()
 	BasicMathOperationsReverse[4] = "\\";
 	BasicMathOperationsReverse[5] = "/";
 	BasicMathOperationsReverse[6] = "%";
+	Variable v;
+	v.type = 2;
+	v.value = 156;
+	Vars["x"] = v;
 }

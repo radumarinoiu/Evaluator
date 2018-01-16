@@ -16,7 +16,7 @@ int main()
 	vector<Element> Elements;
 	InitializeMaps();
 	string error = "";
-	InfixToElements("1+3+abc*(60-3*4)\\2", error, 0, Elements);
+	InfixToElements("1+3+x*(60-3*4)\\2", error, 0, Elements);
 	for (int i = 0; i < Elements.size(); i++)
 	{
 		if (Elements[i].operation != 0)
