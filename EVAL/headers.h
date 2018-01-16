@@ -14,3 +14,4 @@ void InfixToElements(std::string, std::string&, int, std::vector<Element>&);
 Variable EvaluateElements(std::vector<Element>);
 Variable ApplyBasicOperation(Variable, Variable, uint8_t);
 void InitializeMaps();
+Variable SelectFunction(int, std::vector<Variable>);

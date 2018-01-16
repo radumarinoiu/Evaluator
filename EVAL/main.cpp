@@ -16,47 +16,26 @@ int main()
 	vector<Element> Elements;
 	InitializeMaps();
 	string error = "";
-	InfixToElements("1+3+x*sin(60-3*4)\\2", error, 0, Elements);
+	/*InfixToElements("1+3.5123+x*sin(0.7)\\2+3", error, 0, Elements);
 	for (int i = 0; i < Elements.size(); i++)
 	{
 		if (Elements[i].operation != 0)
-			cout << BasicMathOperationsReverse[Elements[i].operation] << "\n";
+			cout << BasicMathOperationsReverse[Elements[i].operation] << "\t";
 		else
 		{
-			if (Elements[i].var.type == 1)
-			{
-				if (Elements[i].var.value == 1)
-					cout << "True\n";
-				else
-					cout << "False\n";
-			}
-			else if (Elements[i].var.type == 3)
-				printf("%f\n", Elements[i].var.value);
+			if (Elements[i].var.type == 3)
+				printf("%f\t", Elements[i].var.value);
 			else
-				printf("%d\n", (int)(Elements[i].var.value));
+				printf("%d\t", (int)(Elements[i].var.value));
 		}
 	}
-	/*Parse("a:=2*3", error);
-	InfixToElements("1+3+5", error, 0, Elements);
-	for (int i = 0; i < Elements.size(); i++)
-	{
-		if (Elements[i].operation != 0)
-			cout << BasicMathOperationsReverse[Elements[i].operation] << "\n";
-		else
-		{
-			if (Elements[i].var.type == 1)
-			{
-				if (Elements[i].var.value == 1)
-					cout << "True\n";
-				else
-					cout << "False\n";
-			}
-			else if (Elements[i].var.type == 3)
-				printf("%f\n", Elements[i].var.value);
-			else
-				printf("%d\n", (int)(Elements[i].var.value));
-		}
-	}*/
+	Variable result = EvaluateElements(Elements);
+	cout << "=\t";
+	if (result.type == 2)
+		cout << (int)(result.value);
+	else
+		cout << result.value;*/
+	Parse("1+3.5123+x*sin(0.7,52)\\2+3", error);
 	cin.get();
 	return 0;
 }

@@ -60,10 +60,20 @@ bool Parse(string input, string &error)
 		Variable result;
 		vector<Element> expression;
 		InfixToElements(input, error, 0, expression);
+		if (error != "")
+		{
+			cout << error;
+			return false;
+		}
 		result = EvaluateElements(expression);
 		if (result.type == 2)
 		{
 			cout << (int)(result.value) << endl;
+			return true;
+		}
+		else
+		{
+			cout << result.value << endl;
 			return true;
 		}
 	}
@@ -117,11 +127,29 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 				error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
 				return;
 			}
+			string contentString = input.substr(pos + 1, input.find(')') - (pos + 1));
+			if (contentString.find(",") != string::npos)
+			{
+				if (contentString.find(",", contentString.find(",")) != string::npos)
+				{
+					//EROARE
+				}
+				//2 parametri
+			}
+			else
+			{
+				//1 parametru
+			}
 			vector<Element> content;
-			InfixToElements(input.substr(pos, input.find(')') - pos), error, oldPos + pos, content); // Parse content of parenthesis
+			InfixToElements(input.substr(pos + 1, input.find(')') - (pos+1)), error, oldPos + currentName.length() + 1, content); // Parse content of parenthesis
+			if (error != "")
+				return;
 			Element evaluatedContent;
 			evaluatedContent.operation = 0;
 			evaluatedContent.var = EvaluateElements(content);
+			vector<Variable> fargs;
+			fargs.push_back(evaluatedContent.var);
+			evaluatedContent.var = SelectFunction(Functions[currentName], fargs);
 			Elements.push_back(evaluatedContent);
 
 			InfixToElements(input.substr(input.find(')') + 1, input.length() - (input.find(')') + 1)), error, oldPos + input.find(')') + 1, Elements); // Parse content after parenthesis
@@ -142,7 +170,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 			currentNumber += input[pos];
 			pos++;
 		}
-		if (GetTypeOfChar(input[pos] == 3)) // Constant Case
+		if (GetTypeOfChar(input[pos]) == 3) // Constant Case
 		{
 			if (currentNumber.find('.') != string::npos) // Check for more than 1 decimal point
 			{
@@ -170,7 +198,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 		}
 		else
 		{
-			error = "Caracter neasteptat pe pozitia " + to_string(pos) + "!";
+			error = "Caracter neasteptat pe pozitia " + to_string(oldPos + pos) + "!";
 			return;
 		}
 	}
@@ -185,7 +213,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 			Element currentElement;
 			currentElement.operation = BasicMathOperations[currentOperation];
 			Elements.push_back(currentElement);
-			InfixToElements(input.substr(pos, input.length()), error, oldPos, Elements);
+			InfixToElements(input.substr(pos, input.length()), error, oldPos + 1, Elements);
 			return;
 		}
 		else
@@ -209,6 +237,8 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 		}
 		vector<Element> content;
 		InfixToElements(input.substr(1, input.find(')') - 1), error, oldPos + 1, content); // Parse content of parenthesis
+		if (error != "")
+			return;
 		Element evaluatedContent;
 		evaluatedContent.operation = 0;
 		evaluatedContent.var = EvaluateElements(content);
@@ -241,6 +271,14 @@ Variable EvaluateElements(vector<Element> expression)
 			}
 			else
 			{
+				if (!opStack.empty())
+				{
+					if (opStack.top().operation >= 3)
+					{
+						postFix.push_back(opStack.top());
+						opStack.pop();
+					}
+				}
 				opStack.push(expression[i]);
 			}
 		}
@@ -290,19 +328,28 @@ Variable ApplyBasicOperation(Variable var1, Variable var2, uint8_t op)
 	if (op == 4)
 	{
 		var.type = 3;
-		var.value = var1.value / var2.value;
+		if (var2.value == 0)
+			var.value = 0;
+		else
+			var.value = var1.value / var2.value;
 		return var; // /
 	}
 	if (op == 5)
 	{
 		var.type = 2;
-		var.value = ((int)(var1.value)) / ((int)(var2.value));
+		if (var2.value == 0)
+			var.value = 0;
+		else
+			var.value = ((int)(var1.value)) / ((int)(var2.value));
 		return var; // \\ 
 	}
 	if (op == 6)
 	{
 		var.type = 2;
-		var.value = ((int)(var1.value)) % ((int)(var2.value));
+		if (var2.value == 0)
+			var.value = 0;
+		else
+			var.value = ((int)(var1.value)) % ((int)(var2.value));
 		return var; // %
 	}
 	return var;
