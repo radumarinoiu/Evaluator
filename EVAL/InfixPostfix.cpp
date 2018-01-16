@@ -14,7 +14,7 @@ int GetTypeOfChar(char c)
 		return 1; // Case Insensitive Letter
 	if (c >= '0' && c <= '9')
 		return 2; // Digit
-	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '\\' || c == '%' || c == '\0' || c == '=')
+	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '\\' || c == '%' || c == '\0' || c == '=' || c == '&' || c == '|' || c == '^')
 		return 3; // Basic Arithmetic Operation
 	if (c == '(' || c == ')')
 		return 4; // Parenthesis
@@ -292,25 +292,30 @@ Variable EvaluateElements(vector<Element> expression)
 		}
 		else
 		{
-			if (expression[i].operation == 1 || expression[i].operation == 2)
+			if (!opStack.empty())
 			{
-				while (opStack.size() > 0)
+				if (OperatorPrecedence[expression[i].operation] > OperatorPrecedence[opStack.top().operation])
+				{
+					opStack.push(expression[i]);
+				}
+				if (OperatorPrecedence[expression[i].operation] == OperatorPrecedence[opStack.top().operation])
 				{
 					postFix.push_back(opStack.top());
 					opStack.pop();
+					opStack.push(expression[i]);
 				}
-				opStack.push(expression[i]);
-			}
-			else
-			{
-				if (!opStack.empty())
+				if (OperatorPrecedence[expression[i].operation] < OperatorPrecedence[opStack.top().operation])
 				{
-					if (opStack.top().operation >= 3)
+					while (opStack.size() > 0 && OperatorPrecedence[expression[i].operation] < OperatorPrecedence[opStack.top().operation])
 					{
 						postFix.push_back(opStack.top());
 						opStack.pop();
 					}
+					opStack.push(expression[i]);
 				}
+			}
+			else
+			{
 				opStack.push(expression[i]);
 			}
 		}
@@ -383,6 +388,33 @@ Variable ApplyBasicOperation(Variable var1, Variable var2, uint8_t op)
 		else
 			var.value = ((int)(var1.value)) % ((int)(var2.value));
 		return var; // %
+	}
+	if (op == 7)
+	{
+		var.type = 2;
+		if (var2.value == 0)
+			var.value = 0;
+		else
+			var.value = ((int)(var1.value))&((int)(var2.value));
+		return var; // &
+	}
+	if (op == 8)
+	{
+		var.type = 2;
+		if (var2.value == 0)
+			var.value = 0;
+		else
+			var.value = ((int)(var1.value))|((int)(var2.value));
+		return var; // |
+	}
+	if (op == 9)
+	{
+		var.type = 2;
+		if (var2.value == 0)
+			var.value = 0;
+		else
+			var.value = ((int)(var1.value))^((int)(var2.value));
+		return var; // ^
 	}
 	return var;
 }
