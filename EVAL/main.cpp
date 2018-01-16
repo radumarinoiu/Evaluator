@@ -16,6 +16,7 @@ int main()
 	vector<Element> Elements;
 	InitializeMaps();
 	string error = "";
+	string input = "";
 	/*InfixToElements("1+3.5123+x*sin(0.7)\\2+3", error, 0, Elements);
 	for (int i = 0; i < Elements.size(); i++)
 	{
@@ -35,7 +36,15 @@ int main()
 		cout << (int)(result.value);
 	else
 		cout << result.value;*/
-	Parse("1+3.5123+x*sin(0.7,52)\\2+3", error);
+	while (input != "exit")
+	{
+		char ci[1024];
+		cin.getline(ci, 1024);
+		input = ci;
+		error = "";
+		Parse(input, error);
+		cout << endl;
+	}
 	cin.get();
 	return 0;
 }

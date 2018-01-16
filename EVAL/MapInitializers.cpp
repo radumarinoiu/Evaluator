@@ -33,8 +33,4 @@ void InitializeMaps()
 	Functions["sqrt"] = 15;
 	Functions["tan"] = 16;
 	Functions["trun"] = 17;
-	Variable v;
-	v.type = 2;
-	v.value = 156;
-	Vars["x"] = v;
 }

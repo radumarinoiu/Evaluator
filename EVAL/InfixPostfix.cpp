@@ -14,7 +14,7 @@ int GetTypeOfChar(char c)
 		return 1; // Case Insensitive Letter
 	if (c >= '0' && c <= '9')
 		return 2; // Digit
-	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '\\' || c == '%')
+	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '\\' || c == '%' || c == '\0' || c == '=')
 		return 3; // Basic Arithmetic Operation
 	if (c == '(' || c == ')')
 		return 4; // Parenthesis
@@ -31,17 +31,21 @@ bool Parse(string input, string &error)
 		if (input.find(":=", signPosition + 2) != string::npos)
 		{
 			error = "Expresia contine doua atribuiri!";
+			cout << error;
 			return false;
 		}
 
 		string leftSide = input.substr(0, signPosition);
 		vector<Element> leftSideVar;
 		InfixToElements(leftSide, error, 0, leftSideVar);
-		if (error != "" || Vars.count(leftSide) == 0)
+		string specError = " nu are atribuita o valoare";
+		if (!(error == "" ||  error.find(specError) != string::npos))
 		{
 			error = "Operatorul din stanga atribuirii nu este o variabila!\n" + error;
+			cout << error;
 			return false;
 		}
+		error = "";
 
 		string rightSide = input.substr(signPosition + 2, input.length() - (signPosition + 2));
 		vector<Element> rightSideVar;
@@ -49,6 +53,7 @@ bool Parse(string input, string &error)
 		if (error != "")
 		{
 			error = "Operatorul din dreapta atribuirii nu este o expresie valida!\n" + error;
+			cout << error;
 			return false;
 		}
 
@@ -82,6 +87,7 @@ bool Parse(string input, string &error)
 
 void InfixToElements(string input, string &error, int oldPos, vector<Element> &Elements)
 {
+	input = input + "\0";
 	if (input == "" || error != "")
 		return;
 	int charType = GetTypeOfChar(input[0]);
@@ -127,31 +133,57 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 				error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
 				return;
 			}
-			string contentString = input.substr(pos + 1, input.find(')') - (pos + 1));
-			if (contentString.find(",") != string::npos)
+			string contentString[2] = { "", input.substr(pos + 1, input.find(')') - (pos + 1)) };
+			if (contentString[1].find(",") != string::npos)
 			{
-				if (contentString.find(",", contentString.find(",")) != string::npos)
+				if (contentString[1].find(",", contentString[1].find(",") + 1) != string::npos)
 				{
-					//EROARE
+					error = "Caracter neasteptat pe pozitia " + to_string(contentString[1].find(",", contentString[1].find(",")) + oldPos) + "!";
+					return;
 				}
-				//2 parametri
+				contentString[0] = contentString[1].substr(0, contentString[1].find(","));
+				contentString[1] = contentString[1].substr(contentString[1].find(",") + 1, contentString[1].length() - contentString[1].find(",") - 1);
+			}
+			vector<Element> parameter1;
+			vector<Element> parameter2;
+			if (contentString[0] != "")
+			{
+				InfixToElements(contentString[0], error, oldPos + currentName.length() + 1, parameter1);
+				if (error != "")
+					return;
+				InfixToElements(contentString[1], error, oldPos + currentName.length() + contentString[0].length() + 2, parameter2);
+				if (error != "")
+					return;
+
+				Element evaluatedContent1;
+				evaluatedContent1.operation = 0;
+				evaluatedContent1.var = EvaluateElements(parameter1);
+
+				Element evaluatedContent2;
+				evaluatedContent2.operation = 0;
+				evaluatedContent2.var = EvaluateElements(parameter2);
+
+				vector<Variable> fargs;
+				fargs.push_back(evaluatedContent1.var);
+				fargs.push_back(evaluatedContent2.var);
+				evaluatedContent1.var = SelectFunction(Functions[currentName], fargs);
+				Elements.push_back(evaluatedContent1);
 			}
 			else
 			{
-				//1 parametru
-			}
-			vector<Element> content;
-			InfixToElements(input.substr(pos + 1, input.find(')') - (pos+1)), error, oldPos + currentName.length() + 1, content); // Parse content of parenthesis
-			if (error != "")
-				return;
-			Element evaluatedContent;
-			evaluatedContent.operation = 0;
-			evaluatedContent.var = EvaluateElements(content);
-			vector<Variable> fargs;
-			fargs.push_back(evaluatedContent.var);
-			evaluatedContent.var = SelectFunction(Functions[currentName], fargs);
-			Elements.push_back(evaluatedContent);
+				InfixToElements(contentString[1], error, oldPos + currentName.length() + 1, parameter1);
+				if (error != "")
+					return;
 
+				Element evaluatedContent1;
+				evaluatedContent1.operation = 0;
+				evaluatedContent1.var = EvaluateElements(parameter1);
+
+				vector<Variable> fargs;
+				fargs.push_back(evaluatedContent1.var);
+				evaluatedContent1.var = SelectFunction(Functions[currentName], fargs);
+				Elements.push_back(evaluatedContent1);
+			}
 			InfixToElements(input.substr(input.find(')') + 1, input.length() - (input.find(')') + 1)), error, oldPos + input.find(')') + 1, Elements); // Parse content after parenthesis
 			return;
 		}
