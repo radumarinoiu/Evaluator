@@ -30,11 +30,12 @@ bool Parse(string input, string &error)
 		int signPosition = input.find(":=");
 		if (input.find(":=", signPosition + 2) != string::npos)
 		{
-			error = "Expresia contine doua atribuiri!";
+			error = "Expresia contine doua atribuiri!\n";
 			cout << error;
 			return false;
 		}
 
+		bool errorOccured = false;
 		string leftSide = input.substr(0, signPosition);
 		vector<Element> leftSideVar;
 		InfixToElements(leftSide, error, 0, leftSideVar);
@@ -43,19 +44,21 @@ bool Parse(string input, string &error)
 		{
 			error = "Operatorul din stanga atribuirii nu este o variabila!\n" + error;
 			cout << error;
-			return false;
+			errorOccured = true;
 		}
 		error = "";
 
 		string rightSide = input.substr(signPosition + 2, input.length() - (signPosition + 2));
 		vector<Element> rightSideVar;
-		InfixToElements(rightSide, error, 0, rightSideVar);
+		InfixToElements(rightSide, error, signPosition + 2, rightSideVar);
 		if (error != "")
 		{
 			error = "Operatorul din dreapta atribuirii nu este o expresie valida!\n" + error;
 			cout << error;
-			return false;
+			errorOccured = true;
 		}
+		if(errorOccured)
+			return false;
 
 		Vars[leftSide] = EvaluateElements(rightSideVar);
 		return true;
@@ -104,7 +107,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 		{
 			if (Vars.count(currentName) == 0)
 			{
-				error = "Variabila '" + currentName + "' de pe pozitia " + to_string(oldPos) + " nu are atribuita o valoare!";
+				error = "Variabila '" + currentName + "' de pe pozitia " + to_string(oldPos) + " nu are atribuita o valoare!\n";
 				return;
 			}
 			Element currentElement;
@@ -130,7 +133,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 			}
 			if (GetTypeOfChar(input[input.find(')') + 1]) != 3)
 			{
-				error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
+				error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!\n";
 				return;
 			}
 			string contentString[2] = { "", input.substr(pos + 1, input.find(')') - (pos + 1)) };
@@ -138,7 +141,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 			{
 				if (contentString[1].find(",", contentString[1].find(",") + 1) != string::npos)
 				{
-					error = "Caracter neasteptat pe pozitia " + to_string(contentString[1].find(",", contentString[1].find(",")) + oldPos) + "!";
+					error = "Caracter neasteptat pe pozitia " + to_string(contentString[1].find(",", contentString[1].find(",")) + oldPos) + "!\n";
 					return;
 				}
 				contentString[0] = contentString[1].substr(0, contentString[1].find(","));
@@ -189,7 +192,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 		}
 		else
 		{
-			error = "Caracter neasteptat pe pozitia " + to_string(pos) + "!";
+			error = "Caracter neasteptat pe pozitia " + to_string(pos) + "!\n";
 			return;
 		}
 	}
@@ -209,7 +212,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 				int pos1 = currentNumber.find('.') != string::npos;
 				if (currentNumber.find('.', pos1 + 1) != string::npos)
 				{
-					error = "Caracter neasteptat pe pozitia " + to_string(oldPos + currentNumber.find('.', pos1 + 1)) + "!";
+					error = "Caracter neasteptat pe pozitia " + to_string(oldPos + currentNumber.find('.', pos1 + 1)) + "!\n";
 				}
 			}
 			Element currentElement;
@@ -230,7 +233,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 		}
 		else
 		{
-			error = "Caracter neasteptat pe pozitia " + to_string(oldPos + pos) + "!";
+			error = "Caracter neasteptat pe pozitia " + to_string(oldPos + pos) + "!\n";
 			return;
 		}
 	}
@@ -250,7 +253,7 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 		}
 		else
 		{
-			error = "Caracter neasteptat pe pozitia " + to_string(oldPos + 1) + "!";
+			error = "Caracter neasteptat pe pozitia " + to_string(oldPos + 1) + "!\n";
 			return;
 		}
 	}
@@ -259,12 +262,12 @@ void InfixToElements(string input, string &error, int oldPos, vector<Element> &E
 	{
 		if (input.find(')') == string::npos)
 		{
-			error = "Lipseste paranteza inchisa pentru paranteza de pe pozitia '" + to_string(oldPos) + "!";
+			error = "Lipseste paranteza inchisa pentru paranteza de pe pozitia '" + to_string(oldPos) + "!\n";
 			return;
 		}
 		if (GetTypeOfChar(input[input.find(')') + 1]) != 3)
 		{
-			error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!";
+			error = "Caracter neasteptat pe pozitia " + to_string(input.find(')') + 1) + "!\n";
 			return;
 		}
 		vector<Element> content;
